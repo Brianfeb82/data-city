@@ -1,0 +1,30 @@
+{
+  "name": "data-city",
+  "private": false,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Real-time 3D data visualization city - visualizing crypto, GitHub, weather, and stock data as an immersive 3D cityscape",
+  "author": "Brian (Nedri Febrianto)",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "oxlint",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
+    "@react-three/postprocessing": "^3.0.4",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "oxlint": "^1.71.0",
+    "vite": "^8.1.1"
+  }
+}

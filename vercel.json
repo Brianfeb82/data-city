@@ -1,0 +1,10 @@
+{
+  "name": "data-city",
+  "version": "1.0.0",
+  "description": "Real-time 3D data visualization - 3D Websites Hackathon submission",
+  "author": "Brian (Nedri Febrianto)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/data-city"
+  }
+}
