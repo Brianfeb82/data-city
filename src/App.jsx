@@ -49,7 +49,7 @@ function App() {
 
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#000' }}>
-      <Canvas camera={{ position: [25, 20, 25], fov: 60 }}>
+      <Canvas camera={{ position: [25, 20, 25], fov: 60, near: 0.1, far: 1000 }}>
         <color attach="background" args={['#0a0a1f']} />
         
         <TimeBasedLighting />
