@@ -27,9 +27,9 @@ function TimeBasedLighting() {
   }, [])
 
   const lighting = {
-    day: { ambient: 0.6, directional: 1.2, fog: 40 },
-    dusk: { ambient: 0.4, directional: 0.8, fog: 35 },
-    night: { ambient: 0.3, directional: 0.6, fog: 30 }
+    day: { ambient: 0.6, directional: 1.2, fog: 80 },
+    dusk: { ambient: 0.4, directional: 0.8, fog: 70 },
+    night: { ambient: 0.3, directional: 0.6, fog: 60 }
   }
 
   const current = lighting[timeOfDay]

@@ -109,6 +109,7 @@ function District({ data, offset, label, labelColor, onBuildingClick, useLiveDat
         color={labelColor}
         anchorX="center"
         anchorY="middle"
+        frustumCulled={false}
       >
         {label}
       </Text>

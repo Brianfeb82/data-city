@@ -59,6 +59,7 @@ function Building({ position, height, color, name, value, onClick }) {
         color="white"
         anchorX="center"
         anchorY="middle"
+        frustumCulled={false}
       >
         {name}
       </Text>
@@ -69,6 +70,7 @@ function Building({ position, height, color, name, value, onClick }) {
         color="white"
         anchorX="center"
         anchorY="middle"
+        frustumCulled={false}
       >
         {value}
       </Text>
