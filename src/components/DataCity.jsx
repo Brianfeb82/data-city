@@ -1,7 +1,8 @@
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Text } from '@react-three/drei'
 import Building from './Building'
+import PulsingBeacon from './PulsingBeacon'
 
 // Demo data - no API calls
 const cryptoData = [
@@ -52,9 +53,47 @@ const stockData = [
   { name: 'JPM', value: '$198', height: 5, color: '#0070ba' },
 ]
 
-function District({ data, offset, label, labelColor, onBuildingClick }) {
+function District({ data, offset, label, labelColor, onBuildingClick, useLiveData, dataType }) {
   const gridSize = 3
   const ringRef = useRef()
+  const [liveData, setLiveData] = useState(data)
+
+  useEffect(() => {
+    if (!useLiveData || dataType !== 'crypto') {
+      setLiveData(data)
+      return
+    }
+
+    const fetchLiveData = async () => {
+      try {
+        const symbols = ['bitcoin', 'ethereum', 'binancecoin', 'solana', 'ripple', 'cardano', 'dogecoin', 'polkadot', 'matic-network']
+        const response = await fetch(`https://api.coincap.io/v2/assets?ids=${symbols.join(',')}`)
+        const result = await response.json()
+        
+        if (result.data) {
+          const updated = result.data.map((crypto, index) => {
+            const price = parseFloat(crypto.priceUsd)
+            const marketCap = parseFloat(crypto.marketCapUsd)
+            const height = Math.log10(marketCap) / 2
+            
+            return {
+              name: crypto.symbol,
+              value: price > 1000 ? `$${(price/1000).toFixed(1)}K` : `$${price.toFixed(2)}`,
+              height: height,
+              color: data[index]?.color || '#ffffff'
+            }
+          })
+          setLiveData(updated)
+        }
+      } catch (error) {
+        console.error('Failed to fetch live data:', error)
+      }
+    }
+
+    fetchLiveData()
+    const interval = setInterval(fetchLiveData, 30000)
+    return () => clearInterval(interval)
+  }, [useLiveData, dataType, data])
 
   useFrame((state) => {
     if (ringRef.current) {
@@ -80,7 +119,7 @@ function District({ data, offset, label, labelColor, onBuildingClick }) {
         <meshBasicMaterial color={labelColor} transparent opacity={0.4} />
       </mesh>
       
-      {data.map((item, index) => {
+      {liveData.map((item, index) => {
         const x = (index % gridSize) * 2.5 - 2.5 + offset[0]
         const z = Math.floor(index / gridSize) * 2.5 - 2.5 + offset[1]
         
@@ -100,7 +139,7 @@ function District({ data, offset, label, labelColor, onBuildingClick }) {
   )
 }
 
-function DataCity({ onBuildingClick }) {
+function DataCity({ onBuildingClick, useLiveData }) {
   return (
     <group>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, 0]} receiveShadow>
@@ -116,6 +155,8 @@ function DataCity({ onBuildingClick }) {
         label="CRYPTO" 
         labelColor="#f7931a"
         onBuildingClick={onBuildingClick}
+        useLiveData={useLiveData}
+        dataType="crypto"
       />
       
       <District 
@@ -142,23 +183,7 @@ function DataCity({ onBuildingClick }) {
         onBuildingClick={onBuildingClick}
       />
 
-      <mesh position={[0, 4, 0]}>
-        <cylinderGeometry args={[0.2, 0.3, 8, 8]} />
-        <meshStandardMaterial
-          color="#00ffff"
-          emissive="#00ffff"
-          emissiveIntensity={2}
-        />
-      </mesh>
-      
-      <mesh position={[0, 8, 0]}>
-        <sphereGeometry args={[0.5, 16, 16]} />
-        <meshStandardMaterial
-          color="#00ffff"
-          emissive="#00ffff"
-          emissiveIntensity={3}
-        />
-      </mesh>
+      <PulsingBeacon />
     </group>
   )
 }
