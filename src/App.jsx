@@ -1,6 +1,6 @@
 import { Suspense, useState, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Stars } from '@react-three/drei'
+import { OrbitControls, Stars, Html } from '@react-three/drei'
 import DataCity from './components/DataCity'
 import InfoPanel from './components/InfoPanel'
 import Particles from './components/Particles'
@@ -43,12 +43,89 @@ function TimeBasedLighting() {
   )
 }
 
+function IntroScreen({ onComplete }) {
+  const [progress, setProgress] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval)
+          setTimeout(onComplete, 500)
+          return 100
+        }
+        return prev + 2
+      })
+    }, 30)
+    
+    return () => clearInterval(interval)
+  }, [onComplete])
+
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      background: '#0a0a1f',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'column',
+      zIndex: 9999,
+      opacity: progress >= 100 ? 0 : 1,
+      transition: 'opacity 0.5s'
+    }}>
+      <h1 style={{
+        color: 'white',
+        fontFamily: 'monospace',
+        fontSize: '48px',
+        marginBottom: '40px',
+        background: 'linear-gradient(90deg, #00ffff, #ff00ff)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent'
+      }}>
+        DATA CITY
+      </h1>
+      
+      <div style={{
+        width: '300px',
+        height: '4px',
+        background: 'rgba(255,255,255,0.1)',
+        borderRadius: '2px',
+        overflow: 'hidden'
+      }}>
+        <div style={{
+          width: `${progress}%`,
+          height: '100%',
+          background: 'linear-gradient(90deg, #00ffff, #ff00ff)',
+          transition: 'width 0.1s'
+        }} />
+      </div>
+      
+      <p style={{
+        color: 'white',
+        fontFamily: 'monospace',
+        fontSize: '14px',
+        marginTop: '20px',
+        opacity: 0.6
+      }}>
+        Initializing visualization...
+      </p>
+    </div>
+  )
+}
+
 function App() {
   const [selectedBuilding, setSelectedBuilding] = useState(null)
-  const [useLiveData, setUseLiveData] = useState(false)
+  const [useLiveData, setUseLiveData] = useState(true)
+  const [showIntro, setShowIntro] = useState(true)
 
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#000' }}>
+      {showIntro && <IntroScreen onComplete={() => setShowIntro(false)} />}
+      
       <Canvas camera={{ position: [25, 20, 25], fov: 60, near: 0.1, far: 1000 }}>
         <color attach="background" args={['#0a0a1f']} />
         
@@ -95,7 +172,7 @@ function App() {
           DATA CITY
         </h1>
         <p style={{ margin: '8px 0 0 0', opacity: 0.8, fontSize: '14px' }}>
-          Real-time data visualization in 3D
+          Live data visualization in 3D
         </p>
       </div>
 
@@ -136,12 +213,12 @@ function App() {
         padding: '10px 15px',
         borderRadius: '8px'
       }}>
-        <div>Drag to rotate • Scroll to zoom • Click buildings</div>
+        <div>Drag to rotate • Scroll to zoom • Click buildings for details</div>
         <div style={{ marginTop: '5px' }}>
-          <span style={{ color: '#f7931a' }}>■</span> Crypto &nbsp;
-          <span style={{ color: '#4078c0' }}>■</span> GitHub &nbsp;
-          <span style={{ color: '#4a9eff' }}>■</span> Weather &nbsp;
-          <span style={{ color: '#00ff88' }}>■</span> Stocks
+          <span style={{ color: '#f7931a' }}>■</span> Crypto prices &nbsp;
+          <span style={{ color: '#4078c0' }}>■</span> GitHub stars &nbsp;
+          <span style={{ color: '#4a9eff' }}>■</span> Global weather &nbsp;
+          <span style={{ color: '#00ff88' }}>■</span> Stock prices
         </div>
       </div>
 
